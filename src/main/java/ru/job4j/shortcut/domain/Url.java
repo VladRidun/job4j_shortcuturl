@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
 @Entity
@@ -17,9 +18,9 @@ public class Url {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private int id;
-    @Column(name= "longurl")
+    @Column(name = "longurl")
     private String longUrl;
-    @Column(name= "shorturl")
+    @Column(name = "shorturl")
     private String shortUrl;
     private int count;
 

@@ -29,7 +29,7 @@ public class SimpleUrlService implements UrlService {
     }
 
     public String convert(String longUrl) {
-        String domainName =  longUrl.replaceAll("http(s)?://|/.*", "");
+        String domainName = longUrl.replaceAll("http(s)?://|/.*", "");
         Site site = siteRepository.findBySite(domainName);
         Url newUrl = new Url();
         String shortUrl;
@@ -50,11 +50,10 @@ public class SimpleUrlService implements UrlService {
     }
 
     public Optional<String> redirect(String shortUrl) {
-        if(findByShortUrl(shortUrl).isPresent()) {
+        if (findByShortUrl(shortUrl).isPresent()) {
             Url url = findByShortUrl(shortUrl).get();
             return Optional.of(url.getLongUrl());
-        }
-        else {
+        } else {
             return Optional.empty();
         }
     }
