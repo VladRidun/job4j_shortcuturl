@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
 import static java.util.Collections.emptyList;
 
 @Service
@@ -46,7 +45,6 @@ public class SimpleSiteService implements SiteService, UserDetailsService {
         }
         return resultList;
     }
-
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

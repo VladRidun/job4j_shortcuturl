@@ -11,6 +11,7 @@ public interface SiteService {
     Optional<Site> findById(int id);
 
     Optional<Site> save(Site site);
+
     boolean ifNotExistBySite(String site);
 
     boolean update(Site site);
