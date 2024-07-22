@@ -10,13 +10,16 @@ import ru.job4j.shortcut.domain.Url;
 import ru.job4j.shortcut.repository.SiteRepository;
 import ru.job4j.shortcut.repository.UrlRepository;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @AllArgsConstructor
 public class SimpleUrlService implements UrlService {
     private UrlRepository urlRepository;
     private SiteRepository siteRepository;
+    private final AtomicInteger count = new AtomicInteger(0);
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleUrlService.class);
 
     public boolean ifNotExistBySite(String url) {
@@ -52,10 +55,16 @@ public class SimpleUrlService implements UrlService {
     public Optional<String> redirect(String shortUrl) {
         if (findByShortUrl(shortUrl).isPresent()) {
             Url url = findByShortUrl(shortUrl).get();
+            url.setCount(count.incrementAndGet());
+            urlRepository.save(url);
             return Optional.of(url.getLongUrl());
         } else {
             return Optional.empty();
         }
+    }
+
+    public List<Url> findAll() {
+       return  urlRepository.findAll().stream().toList();
     }
 
 }
