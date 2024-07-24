@@ -22,6 +22,7 @@ import static java.util.Collections.emptyList;
 @Service
 @AllArgsConstructor
 public class SimpleSiteService implements SiteService, UserDetailsService {
+
     private SiteRepository sites;
     private BCryptPasswordEncoder encoder;
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleSiteService.class);

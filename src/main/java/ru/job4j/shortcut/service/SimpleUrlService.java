@@ -17,7 +17,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Service
 @AllArgsConstructor
 public class SimpleUrlService implements UrlService {
+
     private UrlRepository urlRepository;
+
     private SiteRepository siteRepository;
     private final AtomicInteger count = new AtomicInteger(0);
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleUrlService.class);

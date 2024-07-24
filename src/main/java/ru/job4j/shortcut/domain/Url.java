@@ -1,9 +1,6 @@
 package ru.job4j.shortcut.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -13,6 +10,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "url")
+@Builder(builderMethodName = "of")
 public class Url {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
