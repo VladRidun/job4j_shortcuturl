@@ -1,6 +1,6 @@
 package ru.job4j.shortcut.service;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,12 +15,12 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SimpleUrlService implements UrlService {
 
-    private UrlRepository urlRepository;
+    private final UrlRepository urlRepository;
 
-    private SiteRepository siteRepository;
+    private final SiteRepository siteRepository;
     private final AtomicInteger count = new AtomicInteger(0);
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleUrlService.class);
 

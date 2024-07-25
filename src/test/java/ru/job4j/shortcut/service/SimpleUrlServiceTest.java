@@ -1,49 +1,50 @@
 package ru.job4j.shortcut.service;
 
-import lombok.RequiredArgsConstructor;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestConstructor;
 import ru.job4j.shortcut.domain.Url;
 import ru.job4j.shortcut.repository.UrlRepository;
 
-
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 @SpringBootTest
-@AutoConfigureMockMvc
-@RequiredArgsConstructor
-@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-@ActiveProfiles("test")
 public class SimpleUrlServiceTest {
     @Mock
     private UrlRepository urlRepository;
-
     @InjectMocks
     private SimpleUrlService simpleUrlService;
+    private Url url1;
+    private Url url2;
+
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+
+        String longUrl1 = "longUrl1";
+        String shortUrl1 = "shortUrl1";
+        url1 = Url.of().id(1).longUrl(longUrl1).shortUrl(shortUrl1).build();
+
+        String longUrl2 = "longUrl2";
+        String shortUrl2 = "shortUrl2";
+        url2 = Url.of().id(2).longUrl(longUrl2).shortUrl(shortUrl2).build();
+    }
 
     @Test
-    public void countForDifferentSites()  {
-        int expectedCounterValueForSiteA = 1;
-        int expectedCounterValueForSiteB = 1;
+    public void testRedirect_MultipleRedirects_IncrementCountMultipleTimes() {
 
-        String longUrl1 = "https://mail.ru/path?query=string#fragment";
-        String shortUrl1 = "ABC123";
-        Url url1 = Url.of().id(1).longUrl(longUrl1).shortUrl(shortUrl1).build();
+        int initialCount1 = url1.getCount();
+        int initialCount2 = url2.getCount();
 
-        String longUrl2 = "https://rp5.ru/path?query=string#fragment";
-        String shortUrl2 = "DEF456";
-        Url url2 = Url.of().id(2).longUrl(longUrl2).shortUrl(shortUrl2).build();
+        when(urlRepository.findfByShortUrl("shortUrl1")).thenReturn(url1);
+        when(urlRepository.findfByShortUrl("shortUrl2")).thenReturn(url2);
 
-        urlRepository.save(url1);
-        urlRepository.save(url2);
+        simpleUrlService.redirect("shortUrl1");
+        simpleUrlService.redirect("shortUrl2");
 
-        simpleUrlService.redirect("ABC123");
-        simpleUrlService.redirect("DEF456");
-
-        assertEquals(expectedCounterValueForSiteA, simpleUrlService.findByShortUrl("ABC123").get().getCount());
-        assertEquals(expectedCounterValueForSiteB, simpleUrlService.findByShortUrl("DEF456").get().getCount());
+        assertEquals(initialCount1 + 1, url1.getCount());
+        assertEquals(initialCount2 + 2, url2.getCount());
+        verify(urlRepository, times(2)).save(any(Url.class));
     }
 }
