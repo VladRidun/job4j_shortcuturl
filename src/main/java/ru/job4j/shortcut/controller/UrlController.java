@@ -21,7 +21,7 @@ public class UrlController {
     @PostMapping("/convert")
     public ResponseEntity<?> convert(@RequestBody Map<String, String> body) {
         String url = body.get("url");
-        String shortUrl = urlService.convert(url);
+        String shortUrl = urlService.convert(url).get().getShortUrl();
         var bodyAnswer = new HashMap<>() {{
             put("code:", shortUrl);
         }}.toString();
@@ -38,7 +38,7 @@ public class UrlController {
         var redirectUrl = urlService.redirect(url);
         if (redirectUrl.isPresent()) {
             entity = ResponseEntity.status(HttpStatus.valueOf(302))
-                    .header("HTTP CODE", "302 REDIRECT URL = ".concat(redirectUrl.get())).build();
+                    .header("HTTP CODE", "302 REDIRECT URL = ".concat(redirectUrl.get().getLongUrl())).build();
         }
         return entity;
     }

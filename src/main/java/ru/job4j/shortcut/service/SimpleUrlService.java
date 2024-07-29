@@ -12,7 +12,6 @@ import ru.job4j.shortcut.repository.UrlRepository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @RequiredArgsConstructor
@@ -21,52 +20,43 @@ public class SimpleUrlService implements UrlService {
     private final UrlRepository urlRepository;
 
     private final SiteRepository siteRepository;
-    private final AtomicInteger count = new AtomicInteger(0);
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleUrlService.class);
-
-    public boolean ifNotExistBySite(String url) {
-        return urlRepository.findfByLongUrl(url) == null;
-    }
 
     @Override
     public Optional<Url> findByShortUrl(String shortUrl) {
-        return Optional.of(urlRepository.findfByShortUrl(shortUrl));
+        return urlRepository.findfByShortUrl(shortUrl);
     }
 
-    public String convert(String longUrl) {
+    @Override
+    public Optional<Url> findByLongUrl(String longUrl) {
+        return urlRepository.findfByLongUrl(longUrl);
+    }
+
+    public Optional<Url> convert(String longUrl) {
         String domainName = longUrl.replaceAll("http(s)?://|/.*", "");
         Site site = siteRepository.findBySite(domainName);
-        Url newUrl = new Url();
-        String shortUrl;
-        if (ifNotExistBySite(longUrl)) {
-            shortUrl = RandomStringUtils.randomAlphanumeric(7);
+        var urlMayBe = findByLongUrl(longUrl);
+        if (urlMayBe.isEmpty()) {
+            Url newUrl = new Url();
             newUrl.setLongUrl(longUrl);
-            newUrl.setShortUrl(shortUrl);
+            newUrl.setShortUrl(RandomStringUtils.randomAlphanumeric(7));
             newUrl.setSite(site);
-            try {
-                urlRepository.save(newUrl);
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
+            urlRepository.save(newUrl);
         }
-        Url resultUrl = urlRepository.findfByLongUrl(longUrl);
-        shortUrl = resultUrl.getShortUrl();
-        return shortUrl;
+        return urlMayBe;
     }
 
-    public Optional<String> redirect(String shortUrl) {
-        if (findByShortUrl(shortUrl).isPresent()) {
-            Url url = findByShortUrl(shortUrl).get();
-            url.setCount(count.incrementAndGet());
+    public Optional<Url> redirect(String shortUrl) {
+        var optionalUrl = findByShortUrl(shortUrl);
+        if (optionalUrl.isPresent()) {
+            var url = optionalUrl.get();
+            url.setCount(url.getCount() + 1);
             urlRepository.save(url);
-            return Optional.of(url.getLongUrl());
-        } else {
-            return Optional.empty();
         }
+        return optionalUrl;
     }
 
     public List<Url> findAll() {
-       return  urlRepository.findAll().stream().toList();
+        return urlRepository.findAll().stream().toList();
     }
-
 }

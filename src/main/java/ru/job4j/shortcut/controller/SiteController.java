@@ -19,6 +19,7 @@ public class SiteController {
     public ResponseEntity<?> registration(@RequestBody Map<String, String> body) {
         String site = body.get("site");
         var bodyAnswer = new HashMap<>();
+        var statusHttp = HttpStatus.CREATED;
         if (siteService.ifNotExistBySite(site)) {
             var regSiteResult = siteService.registration(site);
             bodyAnswer.put("registration:", true);
@@ -26,9 +27,10 @@ public class SiteController {
             bodyAnswer.put("password:", regSiteResult.get(1));
         } else {
             bodyAnswer.put("registration:", false);
+            statusHttp = HttpStatus.CONFLICT;
         }
         var contentResult = bodyAnswer.toString();
-        return ResponseEntity.status(HttpStatus.CREATED)
+        return ResponseEntity.status(statusHttp)
                 .header("Job4jCustomHeader", "job4j")
                 .contentType(MediaType.APPLICATION_JSON)
                 .contentLength(contentResult.length())

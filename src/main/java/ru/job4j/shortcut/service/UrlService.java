@@ -9,7 +9,8 @@ public interface UrlService {
 
     Collection<Url> findAll();
 
-    boolean ifNotExistBySite(String site);
-
     Optional<Url> findByShortUrl(String shortUrl);
+
+    Optional<Url> findByLongUrl(String longUrl);
+
 }
