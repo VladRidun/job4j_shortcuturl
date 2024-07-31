@@ -24,12 +24,12 @@ public class SimpleUrlService implements UrlService {
 
     @Override
     public Optional<Url> findByShortUrl(String shortUrl) {
-        return urlRepository.findfByShortUrl(shortUrl);
+        return urlRepository.findByShortUrl(shortUrl);
     }
 
     @Override
     public Optional<Url> findByLongUrl(String longUrl) {
-        return urlRepository.findfByLongUrl(longUrl);
+        return urlRepository.findByLongUrl(longUrl);
     }
 
     public Optional<Url> convert(String longUrl) {
@@ -49,9 +49,7 @@ public class SimpleUrlService implements UrlService {
     public Optional<Url> redirect(String shortUrl) {
         var optionalUrl = findByShortUrl(shortUrl);
         if (optionalUrl.isPresent()) {
-            var url = optionalUrl.get();
-            url.setCount(url.getCount() + 1);
-            urlRepository.save(url);
+            urlRepository.incrementCount(shortUrl);
         }
         return optionalUrl;
     }
